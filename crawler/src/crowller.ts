@@ -1,9 +1,22 @@
 import superagent from "superagent";
 import cheerio from "cheerio";
+import fs from "fs";
+import path from "path";
 
+// 每一个课程的interface
 interface Course {
   title: string;
   price: number;
+}
+
+// 解析后生成的数据结构
+interface CourseResult {
+  time: number; //因为是时间戳，所以类型是number
+  data: Course[];
+}
+
+interface Content {
+  [propName: number]: Course[];
 }
 
 class Crowller {
@@ -24,21 +37,47 @@ class Crowller {
         price,
       });
     });
-    const result = {
+    return {
       time: new Date().getTime(),
       data: courseInfos,
     };
-    console.log(result);
   }
   // 获取html
-  getRawHtml() {
-    superagent.get("https://coding.imooc.com/").then((res) => {
-      this.getCourseInfo(res.text);
-    });
+  async getRawHtml() {
+    const result = await superagent.get("https://coding.imooc.com/");
+    return result.text;
   }
+
+  // 生成课程信息的json文件
+  generateJsonContent(courseInfo: CourseResult) {
+    const filePath = path.join(__dirname, "../data/course.json");
+    // fileContent 是对象，键名是时间戳，键值是课程信息（数组）
+    let fileContent: Content = {};
+    // 判断文件是否存在
+    if (fs.existsSync(filePath)) {
+      // readFileSync 读取后是字符串，需要用JSON.parse转换成对象
+      fileContent = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    }
+    // 生成文件内容
+    fileContent[courseInfo.time] = courseInfo.data;
+    return fileContent;
+  }
+
+  // 初始化爬虫
+  async initSpiderProcess() {
+    const filePath = path.join(__dirname, "../data/course.json");
+    // 调用getRawHtml方法获取html结构
+    const html = await this.getRawHtml();
+    // 把html传入 getCourseInfo 方法解析html
+    const courseInfo = this.getCourseInfo(html); // 这里生成的应该是应该具有time和data的对象
+    const fileContent = this.generateJsonContent(courseInfo);
+    // 写入文件 fileContent 是对象，写入时得转换成字符串 JSON.stringify
+    fs.writeFileSync(filePath, JSON.stringify(fileContent));
+  }
+
   constructor() {
-    console.log("初始化爬虫");
-    this.getRawHtml();
+    // 调用 初始化爬虫
+    this.initSpiderProcess();
   }
 }
 
