@@ -21,8 +21,25 @@ interface Content {
 }
 
 class CodingImoocAnalyzer implements Analyzer {
+  /* 单例模式 */
+  // 实例
+  private static instance: Analyzer;
+  // 不可被外部实例化
+  private constructor() {}
+  // 获取实例
+  static getInstance() {
+    // 如果 getInstance 方法有接收值，那么只有第一次调用时，才会生成实例，只有第一次传的值才有效
+    // 判断是否存在实例
+    if (!CodingImoocAnalyzer.instance) {
+      // 不存在实例，创建实例
+      CodingImoocAnalyzer.instance = new CodingImoocAnalyzer();
+    }
+    // 返回 instance 实例
+    return CodingImoocAnalyzer.instance;
+  }
+
   //解析html
-  getCourseInfo(html: string) {
+  private getCourseInfo(html: string) {
     const $ = cheerio.load(html);
     const courseCard = $(".course-card");
     const courseInfos: Course[] = [];
@@ -45,7 +62,7 @@ class CodingImoocAnalyzer implements Analyzer {
   }
 
   // 生成课程信息的json文件
-  generateJsonContent(courseInfo: CourseResult, filePath: string) {
+  private generateJsonContent(courseInfo: CourseResult, filePath: string) {
     // fileContent 是对象，键名是时间戳，键值是课程信息（数组）
     let fileContent: Content = {};
     // 判断文件是否存在

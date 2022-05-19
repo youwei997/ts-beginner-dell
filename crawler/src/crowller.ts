@@ -2,8 +2,7 @@ import superagent from "superagent";
 import fs from "fs";
 import path from "path";
 
-// import CodingImoocAnalyzer from "./CodingImoocAnalyzer";
-import HtmlAnalyzer from "./HtmlAnalyzer";
+import CodingImoocAnalyzer from "./CodingImoocAnalyzer";
 
 export interface Analyzer {
   analyze: (html: string, filePath: string) => string;
@@ -12,18 +11,19 @@ export interface Analyzer {
 class Crowller {
   private filePath = path.join(__dirname, "../data/course.json");
   // 获取html
-  async getRawHtml() {
+  private async getRawHtml() {
     const result = await superagent.get(this.url);
 
     return result.text;
   }
 
-  writeFileSync(content: string) {
+  private writeFileSync(content: string) {
     fs.writeFileSync(this.filePath, content);
+    console.log("写入成功");
   }
 
   // 初始化爬虫
-  async initSpiderProcess() {
+  private async initSpiderProcess() {
     // 调用getRawHtml方法获取html结构
     const html = await this.getRawHtml();
     const fileContent = this.analyzer.analyze(html, this.filePath);
@@ -39,6 +39,6 @@ class Crowller {
 
 const url = "https://coding.imooc.com/";
 
-// const analyzer = new CodingImoocAnalyzer();
-const analyzer = new HtmlAnalyzer();
+const analyzer = CodingImoocAnalyzer.getInstance();
+
 new Crowller(url, analyzer);
