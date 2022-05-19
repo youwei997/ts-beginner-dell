@@ -20,6 +20,9 @@ interface Content {
 }
 
 class Crowller {
+  private url = "https://coding.imooc.com/";
+  private filePath = path.join(__dirname, "../data/course.json");
+
   //解析html
   getCourseInfo(html: string) {
     const $ = cheerio.load(html);
@@ -44,35 +47,37 @@ class Crowller {
   }
   // 获取html
   async getRawHtml() {
-    const result = await superagent.get("https://coding.imooc.com/");
+    const result = await superagent.get(this.url);
     return result.text;
   }
 
   // 生成课程信息的json文件
   generateJsonContent(courseInfo: CourseResult) {
-    const filePath = path.join(__dirname, "../data/course.json");
     // fileContent 是对象，键名是时间戳，键值是课程信息（数组）
     let fileContent: Content = {};
     // 判断文件是否存在
-    if (fs.existsSync(filePath)) {
+    if (fs.existsSync(this.filePath)) {
       // readFileSync 读取后是字符串，需要用JSON.parse转换成对象
-      fileContent = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+      fileContent = JSON.parse(fs.readFileSync(this.filePath, "utf-8"));
     }
     // 生成文件内容
     fileContent[courseInfo.time] = courseInfo.data;
     return fileContent;
   }
 
+  writeFileSync(content: string) {
+    fs.writeFileSync(this.filePath, content);
+  }
+
   // 初始化爬虫
   async initSpiderProcess() {
-    const filePath = path.join(__dirname, "../data/course.json");
     // 调用getRawHtml方法获取html结构
     const html = await this.getRawHtml();
     // 把html传入 getCourseInfo 方法解析html
     const courseInfo = this.getCourseInfo(html); // 这里生成的应该是应该具有time和data的对象
     const fileContent = this.generateJsonContent(courseInfo);
     // 写入文件 fileContent 是对象，写入时得转换成字符串 JSON.stringify
-    fs.writeFileSync(filePath, JSON.stringify(fileContent));
+    this.writeFileSync(JSON.stringify(fileContent));
   }
 
   constructor() {
