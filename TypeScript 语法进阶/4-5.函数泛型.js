@@ -1,4 +1,4 @@
 function join(first, second) {
-    return "".concat(first, ":").concat(second);
+  return "".concat(first, ":").concat(second);
 }
-join(1, 2);
+console.log(join(1, 2));
