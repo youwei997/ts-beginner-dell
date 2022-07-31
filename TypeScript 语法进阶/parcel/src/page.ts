@@ -1,1 +1,3 @@
-console.log('ts');
+$(function () {
+    $('body').html('<div11111</div>')
+})
