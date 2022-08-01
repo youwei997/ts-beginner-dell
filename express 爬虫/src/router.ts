@@ -22,16 +22,32 @@ router.get('/', (req: Request, res: Response) => {
         res.end(data);
     });
 })
-router.post('/crawler', (req: RequestWithBody, res: Response) => {
-    const { password } = req.body
-    if (password === '123') {
-        // 当密码为123 才会进行爬虫请求
-        const url = "https://coding.imooc.com/";
-        new Crawler(url, analyzer)
-        res.send('crawler success')
-    } else {
-        res.send(req.teacherName + 'password error')
-    }
 
+// 爬虫路由
+// router.post('/crawler', (req: RequestWithBody, res: Response) => {
+//     const { password } = req.body
+//     if (password === '123') {
+//         // 当密码为123 才会进行爬虫请求
+//         const url = "https://coding.imooc.com/";
+//         new Crawler(url, analyzer)
+//         res.send('crawler success')
+//     } else {
+//         res.send('password error')
+//     }
+// })
+
+router.post('/login', (req: RequestWithBody, res: Response) => {
+    const { password } = req.body
+    const isLogin = req.session ? req.session.login : false
+    if (isLogin) {
+        res.send('已经登陆')
+    } else {
+        if (password === '123' && req.session) {
+            req.session.login = true
+            res.send('登录成功')
+        } else {
+            res.send('登录失败')
+        }
+    }
 })
 export default router
