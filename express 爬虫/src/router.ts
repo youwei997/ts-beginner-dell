@@ -1,27 +1,39 @@
 import express, { Router, Request, Response } from "express";
-import fs from 'fs'
+import fs from "fs";
 import Crawler from "./Crawler";
 import CodingImoocAnalyzer from "./CodingImoocAnalyzer";
-const router = Router()
+const router = Router();
 const analyzer = CodingImoocAnalyzer.getInstance();
 
 // 当使用中间件，ts描述文件类型不准确时，可以引入描述文件某个具体内容，再改变这个内容
 interface RequestWithBody extends Request {
-    body: {
-        // 传进来任意字段都是string类型
-        [key: string]: string | undefined
-    }
+  body: {
+    // 传进来任意字段都是string类型
+    [key: string]: string | undefined;
+  };
 }
-router.get('/', (req: Request, res: Response) => {
+router.get("/", (req: Request, res: Response) => {
+  const isLogin = req.session ? req.session.login : false;
+  console.log(req.session);
+
+  if (isLogin) {
+    const logOut = `<html>
+                        <body>
+                            <a href='/logout'>退出</a>
+                        </body>
+                  </html>`;
+    res.send(logOut);
+  } else {
     // 使用html表单，点击提交才能发送 /crawler 请求
-    res.writeHead(200, { 'Content-Type': 'text/html' })
-    fs.readFile('./static/login.html', 'utf-8', (err, data) => {
-        if (err) {
-            throw err;
-        }
-        res.end(data);
+    res.writeHead(200, { "Content-Type": "text/html" });
+    fs.readFile("./static/login.html", "utf-8", (err, data) => {
+      if (err) {
+        throw err;
+      }
+      res.end(data);
     });
-})
+  }
+});
 
 // 爬虫路由
 // router.post('/crawler', (req: RequestWithBody, res: Response) => {
@@ -36,18 +48,25 @@ router.get('/', (req: Request, res: Response) => {
 //     }
 // })
 
-router.post('/login', (req: RequestWithBody, res: Response) => {
-    const { password } = req.body
-    const isLogin = req.session ? req.session.login : false
-    if (isLogin) {
-        res.send('已经登陆')
+router.post("/login", (req: RequestWithBody, res: Response) => {
+  const { password } = req.body;
+  const isLogin = req.session ? req.session.login : false;
+  if (isLogin) {
+    res.send("已经登陆");
+  } else {
+    if (password === "123" && req.session) {
+      req.session.login = true;
+      res.send("登录成功");
     } else {
-        if (password === '123' && req.session) {
-            req.session.login = true
-            res.send('登录成功')
-        } else {
-            res.send('登录失败')
-        }
+      res.send("登录失败");
     }
-})
-export default router
+  }
+});
+
+router.get("/logout", (req, res) => {
+  if (req.session) {
+    req.session.login = false;
+  }
+  res.redirect("/");
+});
+export default router;
