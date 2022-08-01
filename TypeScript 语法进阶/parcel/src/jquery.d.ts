@@ -1,3 +1,18 @@
+/* 定义全局变量，对象，函数 */
+// 定义全局函数
+// declare var $: (param: () => void) => void
+// 定义函数重载
+// declare function $(readyFunc: () => void): void
+// // 选择器
+// declare function $(selector: string): JqueryInstance
+// 定义对象
+// declare namespace $ {
+//     namespace fn {
+//         class init { }
+//     }
+// }
+
+
 // 定义全局变量形式 声明$是一个函数，传入的参数是一个函数，传入的函数返回值为空,$函数的返回值空,
 // declare var $: (param: () => void) => void
 
@@ -11,7 +26,30 @@
 // }
 
 
-// 优化
+// 优化 函数重载
+// interface JqueryInstance {
+//     // 再返回一个JqueryInstance，jq的链式调用
+//     html: (html: string) => JqueryInstance
+// }
+// // 这个是用于传入一个加载函数
+// declare function $(readyFunc: () => void): void
+// // 选择器
+// declare function $(selector: string): JqueryInstance
+
+
+// 使用interface形式定义函数重载
+// interface JqueryInstance {
+//     // 再返回一个JqueryInstance，jq的链式调用
+//     html: (html: string) => JqueryInstance
+// }
+// interface Jquery {
+//     (readyFunc: () => void): void;
+//     (selector: string): JqueryInstance
+// }
+// declare const $: Jquery
+
+
+// new $.fn.init()
 interface JqueryInstance {
     // 再返回一个JqueryInstance，jq的链式调用
     html: (html: string) => JqueryInstance
@@ -20,3 +58,8 @@ interface JqueryInstance {
 declare function $(readyFunc: () => void): void
 // 选择器
 declare function $(selector: string): JqueryInstance
+declare namespace $ {
+    namespace fn {
+        class init { }
+    }
+}
