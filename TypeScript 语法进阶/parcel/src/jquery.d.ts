@@ -13,7 +13,8 @@
 
 // 优化
 interface JqueryInstance {
-    html: (html: string) => {}
+    // 再返回一个JqueryInstance，jq的链式调用
+    html: (html: string) => JqueryInstance
 }
 // 这个是用于传入一个加载函数
 declare function $(readyFunc: () => void): void
