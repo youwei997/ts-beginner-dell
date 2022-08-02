@@ -2,6 +2,7 @@ import express, { Router, Request, Response } from "express";
 import fs from "fs";
 import Crawler from "./Crawler";
 import CodingImoocAnalyzer from "./CodingImoocAnalyzer";
+import path from "path";
 const router = Router();
 const analyzer = CodingImoocAnalyzer.getInstance();
 
@@ -19,6 +20,7 @@ router.get("/", (req: Request, res: Response) => {
   if (isLogin) {
     const logOut = `<html>
                         <body>
+                            <a href='/crawler'>爬取数据</a>
                             <a href='/logout'>退出</a>
                         </body>
                   </html>`;
@@ -36,17 +38,17 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 // 爬虫路由
-// router.post('/crawler', (req: RequestWithBody, res: Response) => {
-//     const { password } = req.body
-//     if (password === '123') {
-//         // 当密码为123 才会进行爬虫请求
-//         const url = "https://coding.imooc.com/";
-//         new Crawler(url, analyzer)
-//         res.send('crawler success')
-//     } else {
-//         res.send('password error')
-//     }
-// })
+router.get("/crawler", (req: RequestWithBody, res: Response) => {
+  const isLogin = req.session ? req.session.login : false;
+  if (isLogin) {
+    //只有登录时 才会进行爬虫请求
+    const url = "https://coding.imooc.com/";
+    new Crawler(url, analyzer);
+    res.send("crawler success");
+  } else {
+    res.send("password error");
+  }
+});
 
 router.post("/login", (req: RequestWithBody, res: Response) => {
   const { password } = req.body;
@@ -60,6 +62,21 @@ router.post("/login", (req: RequestWithBody, res: Response) => {
     } else {
       res.send("登录失败");
     }
+  }
+});
+
+router.get("/showData", (req, res) => {
+  const issLogin = req.session ? req.session.login : false;
+  if (!issLogin) {
+    res.send("请登录后操作");
+  }
+  // __dirname 代表build目录
+  try {
+    const position = path.resolve(__dirname, "../data/course.json");
+    const result = fs.readFileSync(position, "utf-8");
+    res.json(JSON.parse(result));
+  } catch (e) {
+    res.send("没有爬取到内容");
   }
 });
 

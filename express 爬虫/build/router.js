@@ -5,7 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const fs_1 = __importDefault(require("fs"));
+const Crawler_1 = __importDefault(require("./Crawler"));
 const CodingImoocAnalyzer_1 = __importDefault(require("./CodingImoocAnalyzer"));
+const path_1 = __importDefault(require("path"));
 const router = (0, express_1.Router)();
 const analyzer = CodingImoocAnalyzer_1.default.getInstance();
 router.get("/", (req, res) => {
@@ -14,6 +16,7 @@ router.get("/", (req, res) => {
     if (isLogin) {
         const logOut = `<html>
                         <body>
+                            <a href='/crawler'>爬取数据</a>
                             <a href='/logout'>退出</a>
                         </body>
                   </html>`;
@@ -31,17 +34,18 @@ router.get("/", (req, res) => {
     }
 });
 // 爬虫路由
-// router.post('/crawler', (req: RequestWithBody, res: Response) => {
-//     const { password } = req.body
-//     if (password === '123') {
-//         // 当密码为123 才会进行爬虫请求
-//         const url = "https://coding.imooc.com/";
-//         new Crawler(url, analyzer)
-//         res.send('crawler success')
-//     } else {
-//         res.send('password error')
-//     }
-// })
+router.get("/crawler", (req, res) => {
+    const isLogin = req.session ? req.session.login : false;
+    if (isLogin) {
+        //只有登录时 才会进行爬虫请求
+        const url = "https://coding.imooc.com/";
+        new Crawler_1.default(url, analyzer);
+        res.send("crawler success");
+    }
+    else {
+        res.send("password error");
+    }
+});
 router.post("/login", (req, res) => {
     const { password } = req.body;
     const isLogin = req.session ? req.session.login : false;
@@ -56,6 +60,21 @@ router.post("/login", (req, res) => {
         else {
             res.send("登录失败");
         }
+    }
+});
+router.get("/showData", (req, res) => {
+    const issLogin = req.session ? req.session.login : false;
+    if (!issLogin) {
+        res.send("请登录后操作");
+    }
+    // __dirname 代表build目录
+    try {
+        const position = path_1.default.resolve(__dirname, "../data/course.json");
+        const result = fs_1.default.readFileSync(position, "utf-8");
+        res.json(JSON.parse(result));
+    }
+    catch (e) {
+        res.send("没有爬取到内容");
     }
 });
 router.get("/logout", (req, res) => {
