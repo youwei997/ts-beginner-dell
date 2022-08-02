@@ -1,26 +1,37 @@
-import express, { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import fs from "fs";
-import Crawler from "./Crawler";
-import CodingImoocAnalyzer from "./CodingImoocAnalyzer";
 import path from "path";
 const router = Router();
-const analyzer = CodingImoocAnalyzer.getInstance();
+import Crawler from "./utils/Crawler";
+import Analyzer from "./utils/Analyzer";
+import { getResData } from "./utils/unit";
+const analyzer = Analyzer.getInstance();
 
 // 当使用中间件，ts描述文件类型不准确时，可以引入描述文件某个具体内容，再改变这个内容
-interface RequestWithBody extends Request {
+interface BodyRequest extends Request {
   body: {
     // 传进来任意字段都是string类型
     [key: string]: string | undefined;
   };
 }
-router.get("/", (req: Request, res: Response) => {
-  const isLogin = req.session ? req.session.login : false;
-  console.log(req.session);
 
+const checkLogin = (req: Request, res: Response, next: NextFunction) => {
+  const isLogin = req.session ? req.session.login : false;
+  if (!isLogin) {
+    res.json(getResData(null, "请登录后操作"));
+    return;
+    // res.send("请登录后操作");
+  }
+  next();
+};
+
+router.get("/", (req: BodyRequest, res: Response) => {
+  const isLogin = req.session ? req.session.login : false;
   if (isLogin) {
     const logOut = `<html>
                         <body>
                             <a href='/crawler'>爬取数据</a>
+                            <a href='/showData'>展示内容</a>
                             <a href='/logout'>退出</a>
                         </body>
                   </html>`;
@@ -38,52 +49,43 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 // 爬虫路由
-router.get("/crawler", (req: RequestWithBody, res: Response) => {
-  const isLogin = req.session ? req.session.login : false;
-  if (isLogin) {
-    //只有登录时 才会进行爬虫请求
-    const url = "https://coding.imooc.com/";
-    new Crawler(url, analyzer);
-    res.send("crawler success");
-  } else {
-    res.send("password error");
-  }
+router.get("/crawler", checkLogin, (req: BodyRequest, res: Response) => {
+  const url = "https://coding.imooc.com/";
+  new Crawler(url, analyzer);
+  res.send("crawler success");
 });
 
-router.post("/login", (req: RequestWithBody, res: Response) => {
+router.post("/login", (req: BodyRequest, res: Response) => {
   const { password } = req.body;
   const isLogin = req.session ? req.session.login : false;
   if (isLogin) {
-    res.send("已经登陆");
+    res.json(getResData(false, "已经登陆"));
   } else {
     if (password === "123" && req.session) {
       req.session.login = true;
-      res.send("登录成功");
+      res.json(getResData(true, "登录成功"));
     } else {
-      res.send("登录失败");
+      res.json(getResData(false, "登录失败"));
     }
   }
 });
 
-router.get("/showData", (req, res) => {
-  const issLogin = req.session ? req.session.login : false;
-  if (!issLogin) {
-    res.send("请登录后操作");
-  }
+router.get("/showData", checkLogin, (req: BodyRequest, res: Response) => {
   // __dirname 代表build目录
   try {
     const position = path.resolve(__dirname, "../data/course.json");
     const result = fs.readFileSync(position, "utf-8");
-    res.json(JSON.parse(result));
+    res.json(getResData(JSON.parse(result)));
   } catch (e) {
-    res.send("没有爬取到内容");
+    res.json(getResData(false, "没有爬取到内容"));
   }
 });
 
-router.get("/logout", (req, res) => {
+router.get("/logout", (req: BodyRequest, res: Response) => {
   if (req.session) {
     req.session.login = false;
   }
   res.redirect("/");
+  res.json(getResData(true));
 });
 export default router;

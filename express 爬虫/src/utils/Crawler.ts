@@ -9,7 +9,7 @@ export interface Analyzer {
 }
 
 class Crawler {
-  private filePath = path.join(__dirname, "../data/course.json");
+  private filePath = path.join(__dirname, "../../data/course.json");
   // 获取html
   private async getRawHtml() {
     const result = await superagent.get(this.url);
@@ -40,4 +40,4 @@ class Crawler {
 // const analyzer = CodingImoocAnalyzer.getInstance();
 
 // new Crawler(url, analyzer);
-export default Crawler
+export default Crawler;

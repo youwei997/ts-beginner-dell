@@ -19,7 +19,7 @@ class Crawler {
     constructor(url, analyzer) {
         this.url = url;
         this.analyzer = analyzer;
-        this.filePath = path_1.default.join(__dirname, "../data/course.json");
+        this.filePath = path_1.default.join(__dirname, "../../data/course.json");
         // 调用 初始化爬虫
         this.initSpiderProcess();
     }
