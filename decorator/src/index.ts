@@ -1,41 +1,44 @@
-// 类的装饰器 本身是一个函数
-// 就是对类的一种修饰
+// T 继承一个构造函数。...args 展开变成一个数组，里面的元素都是any类型，函数的返回值是一个空对象
+// T extends new (...args: any[]) => {}
+// function testDecorator<T extends new (...args: any[]) => {}>(constructor: T) {
+//   // 返回原始的class
+//   return class extends constructor {
+//     name = "li";
+//   };
+// }
+// @testDecorator
+// class Test {
+//   name: string;
+//   constructor(name: string) {
+//     this.name = name;
+//   }
+// }
 
-// 类的装饰器，接收的是一个构造函数
-function testDecorator(constructor: any) {
-  //   constructor.prototype.getName = () => {
-  //     console.log("getName");
-  //   };
-  console.log("testDecorator1");
-}
+// const test = new Test("zs");
+// console.log(test);
 
-function testDecorator2(constructor: any) {
-  //   constructor.prototype.getName = () => {
-  //     console.log("getName");
-  //   };
-  console.log("testDecorator2");
-}
+// (test as any).getName();
 
-// 装饰器传参
-function decoratorParams(flag: boolean) {
-  // 有传入参数时执行返回装饰器，否则返回空的装饰器
-  if (flag) {
-    return function (constructor: any) {
-      constructor.prototype.getName = () => {
-        console.log("getName");
-      };
+// 工厂模式
+function testDecorator() {
+  return function <T extends new (...args: any[]) => any>(constructor: T) {
+    return class extends constructor {
+      name = "lee";
+      getName() {
+        return this.name;
+      }
     };
-  } else {
-    return (constructor: any) => {};
-  }
+  };
 }
 
-// 类创建是就执行，不是实例化才执行
-// 类装饰器收集是从上到下，装饰器执行顺序是从下到上
-@testDecorator
-@testDecorator2
-@decoratorParams(false)
-class Test {}
+const Test = testDecorator()(
+  class {
+    name: string;
+    constructor(name: string) {
+      this.name = name;
+    }
+  }
+);
 
-const test = new Test();
-(test as any).getName();
+const test = new Test("zs");
+console.log(test);
