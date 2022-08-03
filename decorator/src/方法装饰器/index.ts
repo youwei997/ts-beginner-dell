@@ -28,3 +28,5 @@ class Test {
 }
 const test = new Test("name");
 console.log(test.getName());
+
+export default void 0;
