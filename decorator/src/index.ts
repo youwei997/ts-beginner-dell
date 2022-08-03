@@ -1,37 +1,40 @@
-/* 访问器装饰器 */
-// 访问器装饰器 参数和方法装饰器参数一致
-// target getter/setter的prototype
-// key getter/setter的名
-// descriptor 对 getter/setter 的操作
-function visitNameDecorator(
-  target: any,
-  key: string,
-  descriptor: PropertyDescriptor
-) {
-  // 是否允许修改
-  descriptor.writable = false;
-  console.log(key);
+/* 属性装饰器 */
+
+// 属性装饰器只有两个参数
+// target
+// key
+// 虽然属性装饰器没有descriptor，但是可以自定义descriptor，然后return出去，替换属性的descriptor，也是一样的效果
+// function nameDecorator(target: any, key: string): any {
+//   const descriptor: PropertyDescriptor = {
+//     writable: false,
+//   };
+//   return descriptor;
+// }
+
+// 修改的并不是实例上的name吗，而是原型上的name
+// function nameDecorator(target: any, key: string): any {
+//   // 可以使用 (test as any).__proto__.name 访问修改的属性
+//   target[key] = "descriptor";
+// }
+
+function nameDecorator(target: any, key: string): any {
+  const descriptor: PropertyDescriptor = {
+    writable: true,
+  };
+  return descriptor;
 }
 
+// name 放在实例上
 class Test {
-  private _name: string;
-  constructor(name: string) {
-    this._name = name;
-  }
-  get name() {
-    // 像获取属性一样获取getter
-    // console.log(test.name);
-    return this._name;
-  }
-
-  @visitNameDecorator
-  set name(name) {
-    // 像给属性赋值一样 赋值setter
-    // test.name = "555555";
-    this._name = name;
-  }
+  @nameDecorator
+  name: string = "default";
+  //   constructor(name: string) {
+  //     this.name = name;
+  //   }
 }
 
-const test = new Test("name");
-test.name = "555555";
+const test = new Test();
+// test.name = "11";
 console.log(test.name);
+
+export default void 0;
