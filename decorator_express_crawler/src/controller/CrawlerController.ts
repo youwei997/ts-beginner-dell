@@ -4,15 +4,15 @@ import fs from "fs";
 import path from "path";
 
 import { BodyRequest } from "../index";
-import { controller, get, use } from "./decorator";
+import { controller, use, get } from "../decorator/index";
 import Crawler from "../utils/Crawler";
 import Analyzer from "../utils/Analyzer";
 import { getResData } from "../utils/unit";
 const analyzer = Analyzer.getInstance();
 
 // 中间件
-const checkLogin = (req: Request, res: Response, next: NextFunction) => {
-  const isLogin = req.session ? req.session.login : false;
+const checkLogin = (req: Request, res: Response, next: NextFunction): void => {
+  const isLogin = !!(req.session ? req.session.login : false);
   if (!isLogin) {
     res.json(getResData(null, "请登录后操作"));
     return;
@@ -21,11 +21,11 @@ const checkLogin = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-@controller
-class CrawlerController {
+@controller("/")
+export class CrawlerController {
   @get("/crawler")
   @use(checkLogin)
-  crawler(req: BodyRequest, res: Response) {
+  crawler(req: BodyRequest, res: Response): void {
     const url = "https://coding.imooc.com/";
     new Crawler(url, analyzer);
     res.send("crawler success");
@@ -33,7 +33,7 @@ class CrawlerController {
 
   @get("/showData")
   @use(checkLogin)
-  showData(req: BodyRequest, res: Response) {
+  showData(req: BodyRequest, res: Response): void {
     try {
       const position = path.resolve(__dirname, "../../data/course.json");
       const result = fs.readFileSync(position, "utf-8");

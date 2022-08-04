@@ -7,7 +7,7 @@ import cookieSession from "cookie-session";
 import "./controller/LoginController";
 // 引入Crawler装饰器
 import "./controller/CrawlerController";
-import router from "./controller/decorator";
+import router from "./router";
 
 const app = express();
 app.use(express.static(path.join(__dirname, "static")));

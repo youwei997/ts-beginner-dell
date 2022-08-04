@@ -1,17 +1,22 @@
 import "reflect-metadata";
-import { Request, Response } from "express";
+import { Response } from "express";
 import fs from "fs";
 
 import { BodyRequest } from "../index";
-import { controller, get, post } from "./decorator";
+import { controller, get, post } from "../decorator/index";
 import { getResData } from "../utils/unit";
 
-@controller
-class LoginController {
+@controller("/")
+export class LoginController {
+  // 静态方法在类里使用 LoginController.isLogin(req);
+  static isLogin(req: BodyRequest): boolean {
+    return !!(req.session ? req.session.login : false);
+  }
+
   @post("/login")
-  login(req: BodyRequest, res: Response) {
+  login(req: BodyRequest, res: Response): void {
     const { password } = req.body;
-    const isLogin = req.session ? req.session.login : false;
+    const isLogin = LoginController.isLogin(req);
     if (isLogin) {
       res.json(getResData(false, "已经登陆"));
     } else {
@@ -24,7 +29,7 @@ class LoginController {
     }
   }
   @get("/logout")
-  logout(req: BodyRequest, res: Response) {
+  logout(req: BodyRequest, res: Response): void {
     if (req.session) {
       req.session.login = false;
     }
@@ -32,8 +37,8 @@ class LoginController {
     res.json(getResData(true));
   }
   @get("/")
-  home(req: BodyRequest, res: Response) {
-    const isLogin = req.session ? req.session.login : false;
+  home(req: BodyRequest, res: Response): void {
+    const isLogin = LoginController.isLogin(req);
     if (isLogin) {
       const logOut = `<html>
                         <body>

@@ -12,17 +12,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CrawlerController = void 0;
 require("reflect-metadata");
 var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
-var decorator_1 = require("./decorator");
+var index_1 = require("../decorator/index");
 var Crawler_1 = __importDefault(require("../utils/Crawler"));
 var Analyzer_1 = __importDefault(require("../utils/Analyzer"));
 var unit_1 = require("../utils/unit");
 var analyzer = Analyzer_1.default.getInstance();
 // 中间件
 var checkLogin = function (req, res, next) {
-    var isLogin = req.session ? req.session.login : false;
+    var isLogin = !!(req.session ? req.session.login : false);
     if (!isLogin) {
         res.json((0, unit_1.getResData)(null, "请登录后操作"));
         return;
@@ -49,21 +50,22 @@ var CrawlerController = /** @class */ (function () {
         }
     };
     __decorate([
-        (0, decorator_1.get)("/crawler"),
-        (0, decorator_1.use)(checkLogin),
+        (0, index_1.get)("/crawler"),
+        (0, index_1.use)(checkLogin),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], CrawlerController.prototype, "crawler", null);
     __decorate([
-        (0, decorator_1.get)("/showData"),
-        (0, decorator_1.use)(checkLogin),
+        (0, index_1.get)("/showData"),
+        (0, index_1.use)(checkLogin),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], CrawlerController.prototype, "showData", null);
     CrawlerController = __decorate([
-        decorator_1.controller
+        (0, index_1.controller)("/")
     ], CrawlerController);
     return CrawlerController;
 }());
+exports.CrawlerController = CrawlerController;

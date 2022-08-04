@@ -11,7 +11,7 @@ var cookie_session_1 = __importDefault(require("cookie-session"));
 require("./controller/LoginController");
 // 引入Crawler装饰器
 require("./controller/CrawlerController");
-var decorator_1 = __importDefault(require("./controller/decorator"));
+var router_1 = __importDefault(require("./router"));
 var app = (0, express_1.default)();
 app.use(express_1.default.static(path_1.default.join(__dirname, "static")));
 // 只有是正确的content-type默认是application/json才进入这个中间件解析处理。
@@ -24,7 +24,7 @@ app.use((0, cookie_session_1.default)({
     keys: ["cookie-session"],
     maxAge: 24 * 60 * 60 * 1000, //24 小时
 }));
-app.use(decorator_1.default);
+app.use(router_1.default);
 // 自定义一个中间件
 // custom.d.ts
 /*

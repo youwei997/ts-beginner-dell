@@ -12,16 +12,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.LoginController = void 0;
 require("reflect-metadata");
 var fs_1 = __importDefault(require("fs"));
-var decorator_1 = require("./decorator");
+var index_1 = require("../decorator/index");
 var unit_1 = require("../utils/unit");
 var LoginController = /** @class */ (function () {
     function LoginController() {
     }
+    LoginController_1 = LoginController;
+    // 静态方法在类里使用 LoginController.isLogin(req);
+    LoginController.isLogin = function (req) {
+        return !!(req.session ? req.session.login : false);
+    };
     LoginController.prototype.login = function (req, res) {
         var password = req.body.password;
-        var isLogin = req.session ? req.session.login : false;
+        var isLogin = LoginController_1.isLogin(req);
         if (isLogin) {
             res.json((0, unit_1.getResData)(false, "已经登陆"));
         }
@@ -43,7 +49,7 @@ var LoginController = /** @class */ (function () {
         res.json((0, unit_1.getResData)(true));
     };
     LoginController.prototype.home = function (req, res) {
-        var isLogin = req.session ? req.session.login : false;
+        var isLogin = LoginController_1.isLogin(req);
         if (isLogin) {
             var logOut = "<html>\n                        <body>\n                            <a href='/crawler'>\u722C\u53D6\u6570\u636E</a>\n                            <a href='/showData'>\u5C55\u793A\u5185\u5BB9</a>\n                            <a href='/logout'>\u9000\u51FA</a>\n                        </body>\n                  </html>";
             res.send(logOut);
@@ -59,27 +65,29 @@ var LoginController = /** @class */ (function () {
             });
         }
     };
+    var LoginController_1;
     __decorate([
-        (0, decorator_1.post)("/login"),
+        (0, index_1.post)("/login"),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], LoginController.prototype, "login", null);
     __decorate([
-        (0, decorator_1.get)("/logout"),
+        (0, index_1.get)("/logout"),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], LoginController.prototype, "logout", null);
     __decorate([
-        (0, decorator_1.get)("/"),
+        (0, index_1.get)("/"),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], LoginController.prototype, "home", null);
-    LoginController = __decorate([
-        decorator_1.controller
+    LoginController = LoginController_1 = __decorate([
+        (0, index_1.controller)("/")
     ], LoginController);
     return LoginController;
 }());
+exports.LoginController = LoginController;
 // const test = new LoginController();
