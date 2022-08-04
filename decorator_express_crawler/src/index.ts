@@ -3,7 +3,10 @@ import path from "path";
 import cookieSession from "cookie-session";
 
 //引入装饰器Controller
+// 引入登录装饰器
 import "./controller/LoginController";
+// 引入Crawler装饰器
+import "./controller/CrawlerController";
 import router from "./controller/decorator";
 
 const app = express();
