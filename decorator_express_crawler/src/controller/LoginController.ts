@@ -3,14 +3,34 @@ import { Request, Response } from "express";
 import fs from "fs";
 
 import { BodyRequest } from "../index";
-
-import { controller, get } from "./decorator";
+import { controller, get, post } from "./decorator";
+import { getResData } from "../utils/unit";
 
 @controller
 class LoginController {
-  //   constructor(parameters) {}
-  @get("/login")
-  login() {}
+  @post("/login")
+  login(req: BodyRequest, res: Response) {
+    const { password } = req.body;
+    const isLogin = req.session ? req.session.login : false;
+    if (isLogin) {
+      res.json(getResData(false, "已经登陆"));
+    } else {
+      if (password === "123" && req.session) {
+        req.session.login = true;
+        res.json(getResData(true, "登录成功"));
+      } else {
+        res.json(getResData(false, "登录失败"));
+      }
+    }
+  }
+  @get("/logout")
+  logout(req: BodyRequest, res: Response) {
+    if (req.session) {
+      req.session.login = false;
+    }
+    // res.redirect("/");
+    res.json(getResData(true));
+  }
   @get("/")
   home(req: BodyRequest, res: Response) {
     const isLogin = req.session ? req.session.login : false;
@@ -35,4 +55,4 @@ class LoginController {
     }
   }
 }
-new LoginController();
+// const test = new LoginController();

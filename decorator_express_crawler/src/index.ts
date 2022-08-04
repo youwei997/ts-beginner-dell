@@ -1,7 +1,11 @@
 import express, { Request } from "express";
-import router from "./router";
 import path from "path";
 import cookieSession from "cookie-session";
+
+//引入装饰器Controller
+import "./controller/LoginController";
+import router from "./controller/decorator";
+
 const app = express();
 app.use(express.static(path.join(__dirname, "static")));
 // 只有是正确的content-type默认是application/json才进入这个中间件解析处理。

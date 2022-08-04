@@ -1,17 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getResData = void 0;
-const getResData = (data, err) => {
+var getResData = function (data, err) {
     if (err) {
         return {
             success: false,
-            err,
-            data,
+            err: err,
+            data: data,
         };
     }
     return {
         success: true,
-        data,
+        data: data,
     };
 };
 exports.getResData = getResData;
