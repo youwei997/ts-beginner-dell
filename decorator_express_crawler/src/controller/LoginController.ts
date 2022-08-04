@@ -1,15 +1,16 @@
+import "reflect-metadata";
 import { Request, Response } from "express";
 import fs from "fs";
-import { get } from "superagent";
 
 import { BodyRequest } from "../index";
 
-function get(path: string) {
-  return function (target: any, key: string) {};
-}
+import { controller, get } from "./decorator";
 
+@controller
 class LoginController {
   //   constructor(parameters) {}
+  @get("/login")
+  login() {}
   @get("/")
   home(req: BodyRequest, res: Response) {
     const isLogin = req.session ? req.session.login : false;
@@ -34,3 +35,4 @@ class LoginController {
     }
   }
 }
+new LoginController();
