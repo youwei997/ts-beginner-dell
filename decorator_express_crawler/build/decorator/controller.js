@@ -1,4 +1,13 @@
 "use strict";
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -16,15 +25,16 @@ function controller(prefix) {
             // 用方法名取到target.prototype 里对应的函数，相当于取class里的函数
             // 获取请求方法
             var method = Reflect.getMetadata("method", target.prototype, key);
-            // 取中间件
+            // 取中间件,中间件改成数组形式
             var middleware = Reflect.getMetadata("middleware", target.prototype, key);
             var func = target.prototype[key];
             if (path && method) {
                 // 如果传进来是 / 就不加前缀
                 var prefixPath = prefix === "/" ? path : prefix + path;
                 // 如果中间件存在，就把中间件放router生成的路由里
-                if (middleware) {
-                    router_1.default[method](prefixPath, middleware, func);
+                if (middleware && middleware.length) {
+                    // 数组形式中间件
+                    router_1.default[method].apply(router_1.default, __spreadArray(__spreadArray([prefixPath], middleware, false), [func], false));
                 }
                 else {
                     router_1.default[method](prefixPath, func);

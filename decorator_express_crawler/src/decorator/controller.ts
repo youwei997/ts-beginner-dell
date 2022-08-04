@@ -17,8 +17,8 @@ export function controller(prefix: string) {
         target.prototype,
         key
       );
-      // 取中间件
-      const middleware: RequestHandler = Reflect.getMetadata(
+      // 取中间件,中间件改成数组形式
+      const middleware: RequestHandler[] = Reflect.getMetadata(
         "middleware",
         target.prototype,
         key
@@ -29,8 +29,9 @@ export function controller(prefix: string) {
         const prefixPath = prefix === "/" ? path : prefix + path;
 
         // 如果中间件存在，就把中间件放router生成的路由里
-        if (middleware) {
-          router[method](prefixPath, middleware, func);
+        if (middleware && middleware.length) {
+          // 数组形式中间件
+          router[method](prefixPath, ...middleware, func);
         } else {
           router[method](prefixPath, func);
         }
