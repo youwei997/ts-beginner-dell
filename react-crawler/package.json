@@ -2,6 +2,9 @@
   "name": "react-crawler",
   "version": "0.1.0",
   "private": true,
+  "devDependencies": {
+    "@types/react-router-dom": "^5.1.3"
+  },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@testing-library/react": "^13.3.0",
@@ -12,6 +15,7 @@
     "antd": "^3.26.19",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^5.1.2",
     "react-scripts": "5.0.1",
     "typescript": "^4.7.4"
   },
