@@ -1,0 +1,10 @@
+.home-page {
+  width: 300px;
+  padding: 20px;
+  margin: 300px auto;
+  border: 1px solid rgb(219, 219, 219);
+}
+
+.home-page button {
+  margin-right: 20px;
+}

@@ -3,7 +3,7 @@ import { LockOutlined } from "@ant-design/icons";
 import React, { Component } from "react";
 // 引入from组件的类型
 import { WrappedFormUtils } from "antd/lib/form/Form";
-import "./index.css";
+import "./style.css";
 
 // validateFields 方法里回调的values的泛型，具体查看Form 下面 validateFields方法的源码
 interface FormFields {

@@ -38,6 +38,6 @@ declare namespace Express {
 //     req.teacherName = 'hello'
 //     next()
 // })
-app.listen(3000, function () {
+app.listen(3001, function () {
     console.log("服务器启动");
 });
