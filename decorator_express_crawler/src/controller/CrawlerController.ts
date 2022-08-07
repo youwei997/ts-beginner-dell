@@ -21,14 +21,14 @@ const checkLogin = (req: Request, res: Response, next: NextFunction): void => {
   next();
 };
 
-@controller("/")
+@controller("/api")
 export class CrawlerController {
   @get("/crawler")
   @use(checkLogin)
   crawler(req: BodyRequest, res: Response): void {
     const url = "https://coding.imooc.com/";
     new Crawler(url, analyzer);
-    res.send("crawler success");
+    res.json(getResData(true, "爬取成功"));
   }
 
   @get("/showData")

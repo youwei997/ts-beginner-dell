@@ -37,7 +37,7 @@ var CrawlerController = /** @class */ (function () {
     CrawlerController.prototype.crawler = function (req, res) {
         var url = "https://coding.imooc.com/";
         new Crawler_1.default(url, analyzer);
-        res.send("crawler success");
+        res.json((0, unit_1.getResData)(true, "爬取成功"));
     };
     CrawlerController.prototype.showData = function (req, res) {
         try {
@@ -64,7 +64,7 @@ var CrawlerController = /** @class */ (function () {
         __metadata("design:returntype", void 0)
     ], CrawlerController.prototype, "showData", null);
     CrawlerController = __decorate([
-        (0, index_1.controller)("/")
+        (0, index_1.controller)("/api")
     ], CrawlerController);
     return CrawlerController;
 }());
