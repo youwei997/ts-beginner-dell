@@ -13,7 +13,6 @@ const analyzer = Analyzer.getInstance();
 // 中间件
 const checkLogin = (req: Request, res: Response, next: NextFunction): void => {
   const isLogin = !!(req.session ? req.session.login : false);
-  console.log("checkLogin");
   if (!isLogin) {
     res.json(getResData(null, "请登录后操作"));
     return;
@@ -22,16 +21,10 @@ const checkLogin = (req: Request, res: Response, next: NextFunction): void => {
   next();
 };
 
-const test = (req: Request, res: Response, next: NextFunction): void => {
-  console.log("test");
-  next();
-};
-
 @controller("/")
 export class CrawlerController {
   @get("/crawler")
   @use(checkLogin)
-  @use(test)
   crawler(req: BodyRequest, res: Response): void {
     const url = "https://coding.imooc.com/";
     new Crawler(url, analyzer);

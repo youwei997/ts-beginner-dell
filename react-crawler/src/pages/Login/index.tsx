@@ -1,6 +1,9 @@
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, message } from "antd";
 import { LockOutlined } from "@ant-design/icons";
 import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
+import axios from "axios";
+import qs from "qs";
 // 引入from组件的类型
 import { WrappedFormUtils } from "antd/lib/form/Form";
 import "./style.css";
@@ -15,25 +18,64 @@ interface Props {
   form: WrappedFormUtils<FormFields>;
 }
 
-class LoginForm extends Component<Props> {
+interface State {
+  isLogin: boolean;
+}
+
+class LoginForm extends Component<Props, State> {
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      isLogin: false,
+    };
+  }
+
   // form 上面的方法。event类型应该是React库（antd）对应组件的事件类型
   handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log("Received values of form: ", values);
+        axios
+          .post(
+            "/api/login",
+            qs.stringify({
+              password: values.password,
+            }),
+            // 设置 Content-type
+            {
+              headers: {
+                "Content-type": "application/x-www-form-urlencoded",
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res);
+            if (res.data?.data) {
+              console.log(res.data.data);
+
+              this.setState({
+                isLogin: res.data.data,
+              });
+            } else {
+              message.error("登录失败");
+            }
+          });
       }
     });
   };
 
   render() {
     const { getFieldDecorator } = this.props.form;
+    const { isLogin } = this.state;
+    if (isLogin) {
+      return <Redirect to="/"></Redirect>;
+    }
     return (
       <div className="login-page">
         <Form onSubmit={this.handleSubmit} className="login-form">
           <Form.Item>
-            {getFieldDecorator("username", {
+            {getFieldDecorator("password", {
               rules: [{ required: true, message: "请输入登录密码!" }],
             })(
               <Input

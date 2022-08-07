@@ -24,16 +24,11 @@ var analyzer = Analyzer_1.default.getInstance();
 // 中间件
 var checkLogin = function (req, res, next) {
     var isLogin = !!(req.session ? req.session.login : false);
-    console.log("checkLogin");
     if (!isLogin) {
         res.json((0, unit_1.getResData)(null, "请登录后操作"));
         return;
         // res.send("请登录后操作");
     }
-    next();
-};
-var test = function (req, res, next) {
-    console.log("test");
     next();
 };
 var CrawlerController = /** @class */ (function () {
@@ -57,7 +52,6 @@ var CrawlerController = /** @class */ (function () {
     __decorate([
         (0, index_1.get)("/crawler"),
         (0, index_1.use)(checkLogin),
-        (0, index_1.use)(test),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)

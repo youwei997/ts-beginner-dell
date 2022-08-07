@@ -8,13 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoginController = void 0;
 require("reflect-metadata");
-var fs_1 = __importDefault(require("fs"));
 var index_1 = require("../decorator/index");
 var unit_1 = require("../utils/unit");
 var LoginController = /** @class */ (function () {
@@ -33,7 +29,7 @@ var LoginController = /** @class */ (function () {
         var password = req.body.password;
         var isLogin = LoginController_1.isLogin(req);
         if (isLogin) {
-            res.json((0, unit_1.getResData)(false, "已经登陆"));
+            res.json((0, unit_1.getResData)(true, "已经登陆"));
         }
         else {
             if (password === "123" && req.session) {
@@ -49,29 +45,11 @@ var LoginController = /** @class */ (function () {
         if (req.session) {
             req.session.login = false;
         }
-        // res.redirect("/");
         res.json((0, unit_1.getResData)(true));
-    };
-    LoginController.prototype.home = function (req, res) {
-        var isLogin = LoginController_1.isLogin(req);
-        if (isLogin) {
-            var logOut = "<html>\n                        <body>\n                            <a href='/crawler'>\u722C\u53D6\u6570\u636E</a>\n                            <a href='/showData'>\u5C55\u793A\u5185\u5BB9</a>\n                            <a href='/logout'>\u9000\u51FA</a>\n                        </body>\n                  </html>";
-            res.send(logOut);
-        }
-        else {
-            // 使用html表单，点击提交才能发送 /crawler 请求
-            res.writeHead(200, { "Content-Type": "text/html" });
-            fs_1.default.readFile("./static/login.html", "utf-8", function (err, data) {
-                if (err) {
-                    throw err;
-                }
-                res.end(data);
-            });
-        }
     };
     var LoginController_1;
     __decorate([
-        (0, index_1.get)("/api/isLogin"),
+        (0, index_1.get)("/isLogin"),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
@@ -88,14 +66,8 @@ var LoginController = /** @class */ (function () {
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], LoginController.prototype, "logout", null);
-    __decorate([
-        (0, index_1.get)("/"),
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", [Object, Object]),
-        __metadata("design:returntype", void 0)
-    ], LoginController.prototype, "home", null);
     LoginController = LoginController_1 = __decorate([
-        (0, index_1.controller)("/")
+        (0, index_1.controller)("/api")
     ], LoginController);
     return LoginController;
 }());

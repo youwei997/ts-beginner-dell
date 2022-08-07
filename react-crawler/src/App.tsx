@@ -9,7 +9,7 @@ const App: React.FC = () => {
       <HashRouter>
         <Switch>
           <Route path="/login" component={LoginPage}></Route>
-          <Route path="/home" component={HomePage}></Route>
+          <Route path="/" component={HomePage}></Route>
         </Switch>
       </HashRouter>
     </div>
