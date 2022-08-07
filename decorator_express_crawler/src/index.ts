@@ -35,6 +35,9 @@ export interface BodyRequest extends Request {
   };
 }
 
+// 课程爬虫地址
+export const crawlerUrl = "https://coding.imooc.com/?c=aaoc";
+
 // 自定义一个中间件
 // custom.d.ts
 /* 

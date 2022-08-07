@@ -20,6 +20,7 @@ var index_1 = require("../decorator/index");
 var Crawler_1 = __importDefault(require("../utils/Crawler"));
 var Analyzer_1 = __importDefault(require("../utils/Analyzer"));
 var unit_1 = require("../utils/unit");
+var index_2 = require("../index");
 var analyzer = Analyzer_1.default.getInstance();
 // 中间件
 var checkLogin = function (req, res, next) {
@@ -35,7 +36,8 @@ var CrawlerController = /** @class */ (function () {
     function CrawlerController() {
     }
     CrawlerController.prototype.crawler = function (req, res) {
-        var url = "https://coding.imooc.com/";
+        // 因为数据需要使用echarts，课程标题用在echarts的标题，就选择了课程少的课程分类，职场进阶
+        var url = index_2.crawlerUrl;
         new Crawler_1.default(url, analyzer);
         res.json((0, unit_1.getResData)(true, "爬取成功"));
     };

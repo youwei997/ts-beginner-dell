@@ -5,8 +5,19 @@ import { Redirect } from "react-router-dom";
 import ReactEcharts from "echarts-for-react";
 import "./style.css";
 
+// 课程对象： 标题和价格
+interface CourseItem {
+  title: string;
+  price: number;
+}
+// state里data（爬到的数据）的类型， --》 时间戳: 具体课程数组
+interface Data {
+  [key: string]: CourseItem[];
+}
+// state的类型
 interface State {
   isLogin: boolean;
+  data: Data;
 }
 
 class Home extends React.Component<{}, State> {
@@ -14,6 +25,7 @@ class Home extends React.Component<{}, State> {
     super(props);
     this.state = {
       isLogin: true,
+      data: {},
     };
   }
   componentDidMount() {
@@ -22,6 +34,15 @@ class Home extends React.Component<{}, State> {
       if (!res.data?.data) {
         this.setState({
           isLogin: false,
+        });
+      }
+    });
+
+    // 获取爬到的数据
+    axios.get("/api/showData").then((res) => {
+      if (res.data?.data) {
+        this.setState({
+          data: res.data.data,
         });
       }
     });
@@ -48,13 +69,38 @@ class Home extends React.Component<{}, State> {
   };
   // 类型是一个函数，返回类型是echarts.EChartsOption
   getOption: () => echarts.EChartsOption = () => {
+    const { data } = this.state;
+    // legend 的data
+    const courseNames: string[] = [];
+    // x轴数据
+    const times: string[] = [];
+    for (let i in data) {
+      times.push(new Date(Number(i)).toLocaleString());
+      const item = data[i];
+      const tempData: {
+        [key: string]: number[];
+      } = {};
+      item.forEach((innerItem) => {
+        if (!courseNames.includes(innerItem.title)) {
+          courseNames.push(innerItem.title);
+        }
+        // tempData[title];
+      });
+    }
+
     return {
+      title: {
+        text: "慕课网课程",
+      },
       xAxis: {
         type: "category",
-        data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        data: times,
       },
       yAxis: {
         type: "value",
+      },
+      legend: {
+        data: courseNames,
       },
       series: [
         {
@@ -69,13 +115,15 @@ class Home extends React.Component<{}, State> {
     if (isLogin) {
       return (
         <div className="home-page">
-          <Button type="primary" onClick={this.handleCrawlerClick}>
-            爬取
-          </Button>
-          <Button type="primary">展示</Button>
-          <Button type="primary" onClick={this.handleLogoutClick}>
-            退出
-          </Button>
+          <div className="btn-box">
+            <Button type="primary" onClick={this.handleCrawlerClick}>
+              爬取
+            </Button>
+            <Button type="primary">展示</Button>
+            <Button type="primary" onClick={this.handleLogoutClick}>
+              退出
+            </Button>
+          </div>
           <ReactEcharts option={this.getOption()}></ReactEcharts>
         </div>
       );

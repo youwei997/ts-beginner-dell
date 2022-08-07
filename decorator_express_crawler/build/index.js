@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.crawlerUrl = void 0;
 var express_1 = __importDefault(require("express"));
 var path_1 = __importDefault(require("path"));
 var cookie_session_1 = __importDefault(require("cookie-session"));
@@ -25,6 +26,8 @@ app.use((0, cookie_session_1.default)({
     maxAge: 24 * 60 * 60 * 1000, //24 小时
 }));
 app.use(router_1.default);
+// 课程爬虫地址
+exports.crawlerUrl = "https://coding.imooc.com/?c=aaoc";
 // 自定义一个中间件
 // custom.d.ts
 /*

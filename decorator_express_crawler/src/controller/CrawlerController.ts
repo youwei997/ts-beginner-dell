@@ -8,6 +8,7 @@ import { controller, use, get } from "../decorator/index";
 import Crawler from "../utils/Crawler";
 import Analyzer from "../utils/Analyzer";
 import { getResData } from "../utils/unit";
+import { crawlerUrl } from "../index";
 const analyzer = Analyzer.getInstance();
 
 // 中间件
@@ -26,7 +27,8 @@ export class CrawlerController {
   @get("/crawler")
   @use(checkLogin)
   crawler(req: BodyRequest, res: Response): void {
-    const url = "https://coding.imooc.com/";
+    // 因为数据需要使用echarts，课程标题用在echarts的标题，就选择了课程少的课程分类，职场进阶
+    const url = crawlerUrl;
     new Crawler(url, analyzer);
     res.json(getResData(true, "爬取成功"));
   }

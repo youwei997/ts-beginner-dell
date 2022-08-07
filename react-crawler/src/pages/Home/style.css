@@ -1,8 +1,13 @@
 .home-page {
-  width: 600px;
+  width: 1500px;
   padding: 20px;
   margin: 300px auto;
   border: 1px solid rgb(219, 219, 219);
+}
+
+.btn-box {
+  display: flex;
+  justify-content: center;
 }
 
 .home-page button {
