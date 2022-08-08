@@ -22,6 +22,16 @@ var Analyzer_1 = __importDefault(require("../utils/Analyzer"));
 var unit_1 = require("../utils/unit");
 var index_2 = require("../index");
 var analyzer = Analyzer_1.default.getInstance();
+// 课程对象： 标题和价格
+// interface CourseItem {
+//   title: string;
+//   price: number;
+//   people: number;
+// }
+// // state里data（爬到的数据）的类型， --》 时间戳: 具体课程数组
+// interface Data {
+//   [key: string]: CourseItem[];
+// }
 // 中间件
 var checkLogin = function (req, res, next) {
     var isLogin = !!(req.session ? req.session.login : false);

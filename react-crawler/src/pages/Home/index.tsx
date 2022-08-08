@@ -7,19 +7,19 @@ import echarts from "echarts";
 import "./style.css";
 
 // 课程对象： 标题和价格
-interface CourseItem {
-  title: string;
-  price: number;
-  people: number;
-}
-// state里data（爬到的数据）的类型， --》 时间戳: 具体课程数组
-interface Data {
-  [key: string]: CourseItem[];
-}
+// interface CourseItem {
+//   title: string;
+//   price: number;
+//   people: number;
+// }
+// // state里data（爬到的数据）的类型， --》 时间戳: 具体课程数组
+// interface Data {
+//   [key: string]: CourseItem[];
+// }
 // state的类型
 interface State {
   isLogin: boolean;
-  data: Data;
+  data: responseResult.Data;
 }
 
 class Home extends React.Component<{}, State> {
@@ -33,7 +33,7 @@ class Home extends React.Component<{}, State> {
   componentDidMount() {
     // 进入到home页面，调用接口，获取是否登录
     request.get("/api/isLogin").then((res) => {
-      const data: boolean = res.data;
+      const data: responseResult.isLogin = res.data;
       if (!data) {
         this.setState({
           isLogin: false,
@@ -43,17 +43,17 @@ class Home extends React.Component<{}, State> {
 
     // 获取爬到的数据
     request.get("/api/showData").then((res) => {
-      const data: Data = res.data;
+      const data: responseResult.showData = res.data;
       if (data) {
         this.setState({
-          data: data,
+          data,
         });
       }
     });
   }
   handleLogoutClick = (e: React.MouseEvent) => {
     request.get("/api/logout").then((res) => {
-      const data: boolean = res.data;
+      const data: responseResult.logout = res.data;
       if (data) {
         this.setState({
           isLogin: false,
@@ -65,7 +65,7 @@ class Home extends React.Component<{}, State> {
   };
   handleCrawlerClick = (e: React.MouseEvent) => {
     request.get("/api/crawler").then((res) => {
-      const data: boolean = res.data;
+      const data: responseResult.crawler = res.data;
       if (data) {
         message.success("爬取成功");
       } else {
