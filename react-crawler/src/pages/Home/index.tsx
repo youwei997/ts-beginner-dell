@@ -9,6 +9,7 @@ import "./style.css";
 interface CourseItem {
   title: string;
   price: number;
+  people: number;
 }
 // state里data（爬到的数据）的类型， --》 时间戳: 具体课程数组
 interface Data {
@@ -19,6 +20,13 @@ interface State {
   isLogin: boolean;
   data: Data;
 }
+
+// 报错
+// interface LineData {
+//   name: string;
+//   type: string;
+//   data: number[];
+// }
 
 class Home extends React.Component<{}, State> {
   constructor(props: {}) {
@@ -74,17 +82,30 @@ class Home extends React.Component<{}, State> {
     const courseNames: string[] = [];
     // x轴数据
     const times: string[] = [];
+    const tempData: {
+      [key: string]: number[];
+    } = {};
     for (let i in data) {
       times.push(new Date(Number(i)).toLocaleString());
       const item = data[i];
-      const tempData: {
-        [key: string]: number[];
-      } = {};
       item.forEach((innerItem) => {
-        if (!courseNames.includes(innerItem.title)) {
-          courseNames.push(innerItem.title);
+        const { title, people } = innerItem;
+        if (!courseNames.includes(title)) {
+          courseNames.push(title);
         }
-        // tempData[title];
+        tempData[title]
+          ? tempData[title].push(people)
+          : (tempData[title] = [people]);
+      });
+    }
+
+    const result: any[] = [];
+
+    for (const i in tempData) {
+      result.push({
+        name: i,
+        type: "line",
+        data: tempData[i],
       });
     }
 
@@ -102,12 +123,7 @@ class Home extends React.Component<{}, State> {
       legend: {
         data: courseNames,
       },
-      series: [
-        {
-          data: [150, 230, 224, 218, 135, 147, 260],
-          type: "line",
-        },
-      ],
+      series: result,
     };
   };
   render(): React.ReactNode {

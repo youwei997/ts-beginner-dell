@@ -50,9 +50,13 @@ class CodingImoocAnalyzer implements Analyzer {
       const price = parseInt(
         $(element).find(".price").text().replace("￥", "")
       ); //获取金额，并且去除￥
+
+      // 截取学习人数
+       let people = +($(element).find(".numbers.l").text().replace(/[^0-9]/ig,""));
       courseInfos.push({
         title,
         price,
+        people
       });
     });
     return {

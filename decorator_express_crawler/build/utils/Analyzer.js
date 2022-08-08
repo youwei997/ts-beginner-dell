@@ -31,9 +31,12 @@ var CodingImoocAnalyzer = /** @class */ (function () {
             var title = $(element).find(".ellipsis2").text();
             // 获取课程的金额
             var price = parseInt($(element).find(".price").text().replace("￥", "")); //获取金额，并且去除￥
+            // 截取学习人数
+            var people = +($(element).find(".numbers.l").text().replace(/[^0-9]/ig, ""));
             courseInfos.push({
                 title: title,
                 price: price,
+                people: people
             });
         });
         return {
