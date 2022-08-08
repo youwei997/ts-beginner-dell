@@ -1,8 +1,9 @@
 import React from "react";
 import { Button, message } from "antd";
-import axios from "axios";
+import request from "../../request";
 import { Redirect } from "react-router-dom";
 import ReactEcharts from "echarts-for-react";
+import echarts from "echarts";
 import "./style.css";
 
 // 课程对象： 标题和价格
@@ -21,13 +22,6 @@ interface State {
   data: Data;
 }
 
-// 报错
-// interface LineData {
-//   name: string;
-//   type: string;
-//   data: number[];
-// }
-
 class Home extends React.Component<{}, State> {
   constructor(props: {}) {
     super(props);
@@ -38,8 +32,9 @@ class Home extends React.Component<{}, State> {
   }
   componentDidMount() {
     // 进入到home页面，调用接口，获取是否登录
-    axios.get("/api/isLogin").then((res) => {
-      if (!res.data?.data) {
+    request.get("/api/isLogin").then((res) => {
+      const data: boolean = res.data;
+      if (!data) {
         this.setState({
           isLogin: false,
         });
@@ -47,17 +42,19 @@ class Home extends React.Component<{}, State> {
     });
 
     // 获取爬到的数据
-    axios.get("/api/showData").then((res) => {
-      if (res.data?.data) {
+    request.get("/api/showData").then((res) => {
+      const data: Data = res.data;
+      if (data) {
         this.setState({
-          data: res.data.data,
+          data: data,
         });
       }
     });
   }
   handleLogoutClick = (e: React.MouseEvent) => {
-    axios.get("/api/logout").then((res) => {
-      if (res.data?.data) {
+    request.get("/api/logout").then((res) => {
+      const data: boolean = res.data;
+      if (data) {
         this.setState({
           isLogin: false,
         });
@@ -67,8 +64,9 @@ class Home extends React.Component<{}, State> {
     });
   };
   handleCrawlerClick = (e: React.MouseEvent) => {
-    axios.get("/api/crawler").then((res) => {
-      if (res.data?.data) {
+    request.get("/api/crawler").then((res) => {
+      const data: boolean = res.data;
+      if (data) {
         message.success("爬取成功");
       } else {
         message.error("爬取失败");
@@ -99,6 +97,7 @@ class Home extends React.Component<{}, State> {
       });
     }
 
+    // 使用 echarts.EChartsOption.series[] 报错
     const result: any[] = [];
 
     for (const i in tempData) {

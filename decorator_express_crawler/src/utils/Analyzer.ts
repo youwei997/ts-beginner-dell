@@ -8,6 +8,7 @@ import fs from "fs";
 interface Course {
   title: string;
   price: number;
+  people: number;
 }
 
 // 解析后生成的数据结构
@@ -25,7 +26,7 @@ class CodingImoocAnalyzer implements Analyzer {
   // 实例
   private static instance: Analyzer;
   // 不可被外部实例化
-  private constructor() { }
+  private constructor() {}
   // 获取实例
   static getInstance() {
     // 如果 getInstance 方法有接收值，那么只有第一次调用时，才会生成实例，只有第一次传的值才有效
@@ -52,11 +53,14 @@ class CodingImoocAnalyzer implements Analyzer {
       ); //获取金额，并且去除￥
 
       // 截取学习人数
-       let people = +($(element).find(".numbers.l").text().replace(/[^0-9]/ig,""));
+      let people = +$(element)
+        .find(".numbers.l")
+        .text()
+        .replace(/[^0-9]/gi, "");
       courseInfos.push({
         title,
         price,
-        people
+        people,
       });
     });
     return {

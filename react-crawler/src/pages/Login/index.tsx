@@ -2,7 +2,7 @@ import { Form, Input, Button, message } from "antd";
 import { LockOutlined } from "@ant-design/icons";
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
-import axios from "axios";
+import request from "../../request";
 import qs from "qs";
 // 引入from组件的类型
 import { WrappedFormUtils } from "antd/lib/form/Form";
@@ -36,7 +36,7 @@ class LoginForm extends Component<Props, State> {
 
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        axios
+        request
           .post(
             "/api/login",
             qs.stringify({
@@ -50,12 +50,10 @@ class LoginForm extends Component<Props, State> {
             }
           )
           .then((res) => {
-            console.log(res);
-            if (res.data?.data) {
-              console.log(res.data.data);
-
+            const data = res.data;
+            if (data) {
               this.setState({
-                isLogin: res.data.data,
+                isLogin: data,
               });
             } else {
               message.error("登录失败");

@@ -1,10 +1,10 @@
-export interface Result {
+export interface Result<T> {
   success: boolean;
   err?: string;
-  data: any;
+  data: T;
 }
 
-export const getResData = (data: any, err?: string): Result => {
+export const getResData = <T>(data: T, err?: string): Result<T> => {
   if (err) {
     return {
       success: false,

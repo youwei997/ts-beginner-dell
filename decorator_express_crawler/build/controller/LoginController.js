@@ -23,7 +23,8 @@ var LoginController = /** @class */ (function () {
     };
     LoginController.prototype.isLogin = function (req, res) {
         var isLogin = LoginController_1.isLogin(req);
-        res.json((0, unit_1.getResData)(isLogin));
+        var result = (0, unit_1.getResData)(isLogin);
+        res.json(result);
     };
     LoginController.prototype.login = function (req, res) {
         var password = req.body.password;
